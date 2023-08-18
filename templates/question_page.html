@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Question Page</title>
+</head>
+<body>
+    <h1>Question:</h1> {{question}}
+    <form action="/store_in_sql" method="GET"> 
+        <input type="hidden" name="encoded_text" value={{encoded_text}}>
+        <input type="hidden" name="kid_name" value={{kid_name}}>
+        <input type="hidden" name="phone_no" value={{phone_no}}>
+        <input type="hidden" name="ques_no" value={{encoded_ques_no}}>
+        <h2>{{ ques }}</h2>  
+        <input type="text" name="answer" required>
+        <br>
+        <input type="submit" value="Submit Answer">
+    </form>
+</body>
+</html>
