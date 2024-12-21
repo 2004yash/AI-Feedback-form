@@ -4,6 +4,8 @@ import openai
 from urllib.parse import quote, unquote
 from dotenv import load_dotenv
 import os
+import json
+import base64
 
 # Load environment variables
 load_dotenv('.env.local')
@@ -31,6 +33,10 @@ def get_db_connection():
         print(f"Error connecting to database: {err}")
         return None
 
+def get_questions():
+    with open('questions.json', 'r') as f:
+        return json.load(f)['questions']
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -41,31 +47,42 @@ def question():
         kid_name = request.args.get('kid_name')
         phone_no = request.args.get('phone_no')
         ques_no = int(request.args.get('ques_no', 1))
+        custom_question = request.args.get('question')  # For follow-up questions
         
-        conn = get_db_connection()
-        if not conn:
-            return "Database connection error", 500
+        # Calculate progress percentage
+        if custom_question:
+            total = total_questions + 5
+            progress_percentage = round((ques_no / total) * 100)
+            # Handle follow-up question
+            return render_template('question.html',
+                                question=custom_question,
+                                kid_name=kid_name,
+                                phone_no=phone_no,
+                                encoded_text=quote(custom_question),
+                                encoded_ques_no=quote(str(ques_no)),
+                                current_question=ques_no,
+                                total_questions=total,
+                                progress_percentage=progress_percentage)
+        else:
+            # Handle regular questions from questions.json
+            questions = get_questions()
+            if ques_no > len(questions):
+                return redirect('/')
             
-        cursor = conn.cursor()
-        cursor.execute("SELECT question_text FROM questions WHERE id = %s", (ques_no,))
-        question = cursor.fetchone()
-        cursor.close()
-        conn.close()
-
-        if not question:
-            return "Question not found", 404
-
-        encoded_text = quote(question[0])
-        encoded_ques_no = quote(str(ques_no))
-        
-        return render_template('question_page.html',
-                             question=question[0],
-                             kid_name=kid_name,
-                             phone_no=phone_no,
-                             encoded_text=encoded_text,
-                             encoded_ques_no=encoded_ques_no,
-                             current_question=ques_no,
-                             total_questions=total_questions)
+            progress_percentage = round((ques_no / len(questions)) * 100)
+            current_question = questions[ques_no - 1]
+            encoded_text = base64.b64encode(current_question.encode()).decode()
+            encoded_ques_no = base64.b64encode(str(ques_no).encode()).decode()
+            
+            return render_template('question.html',
+                                question=current_question,
+                                kid_name=kid_name,
+                                phone_no=phone_no,
+                                encoded_text=encoded_text,
+                                encoded_ques_no=encoded_ques_no,
+                                current_question=ques_no,
+                                total_questions=len(questions),
+                                progress_percentage=progress_percentage)
     except Exception as e:
         print(f"Error in question route: {e}")
         return "An error occurred", 500
@@ -75,9 +92,12 @@ def store_answer():
     try:
         kid_name = request.args.get('kid_name')
         phone_no = request.args.get('phone_no')
-        question = unquote(request.args.get('encoded_text'))
         answer = request.args.get('answer')
-        current_question = int(request.args.get('ques_no'))
+        encoded_text = request.args.get('encoded_text')
+        encoded_ques_no = request.args.get('encoded_ques_no')
+        
+        question = base64.b64decode(encoded_text).decode()
+        ques_no = int(base64.b64decode(encoded_ques_no).decode())
 
         conn = get_db_connection()
         if not conn:
@@ -92,13 +112,12 @@ def store_answer():
         cursor.close()
         conn.close()
 
-        next_question = current_question + 1
-        
-        if next_question <= total_questions:
+        questions = get_questions()
+        if ques_no < len(questions):
             return redirect(url_for('question',
                                   kid_name=kid_name,
                                   phone_no=phone_no,
-                                  ques_no=next_question))
+                                  ques_no=ques_no + 1))
         else:
             # Generate follow-up questions using OpenAI
             return generate_followup_questions(kid_name, phone_no)
@@ -132,7 +151,7 @@ def generate_followup_questions(kid_name, phone_no):
         
         follow_up_question = response.choices[0].text.strip()
         
-        return redirect(url_for('question2',
+        return redirect(url_for('question',
                               question=follow_up_question,
                               kid_name=kid_name,
                               phone_no=phone_no,
@@ -140,17 +159,6 @@ def generate_followup_questions(kid_name, phone_no):
     except Exception as e:
         print(f"Error generating follow-up questions: {e}")
         return "Survey completed. Thank you!"
-
-@app.route('/question2', methods=['GET'])
-def question2():
-    return render_template('question_page.html',
-                         question=request.args.get('question'),
-                         kid_name=request.args.get('kid_name'),
-                         phone_no=request.args.get('phone_no'),
-                         encoded_text=quote(request.args.get('question')),
-                         encoded_ques_no=quote(request.args.get('ques_no')),
-                         current_question=int(request.args.get('ques_no')),
-                         total_questions=total_questions + 5)  # Adding 5 follow-up questions
 
 if __name__ == '__main__':
     app.run(debug=True)
