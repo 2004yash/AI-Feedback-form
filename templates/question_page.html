@@ -1,19 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Question Page</title>
+    <title>Hoopstar Academy Survey</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Question:</h1> {{question}}
-    <form action="/store_in_sql" method="GET"> 
-        <input type="hidden" name="encoded_text" value={{encoded_text}}>
-        <input type="hidden" name="kid_name" value={{kid_name}}>
-        <input type="hidden" name="phone_no" value={{phone_no}}>
-        <input type="hidden" name="ques_no" value={{encoded_ques_no}}>
-        <h2>{{ ques }}</h2>  
-        <input type="text" name="answer" required>
-        <br>
-        <input type="submit" value="Submit Answer">
-    </form>
+<body class="bg-gradient-to-r from-blue-50 to-indigo-50 min-h-screen">
+    <div class="container mx-auto px-4 py-16 max-w-md">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-indigo-600 mb-2">Feedback Survey</h2>
+                <p class="text-gray-600">Hello, {{ kid_name }}</p>
+                <div class="mt-2 text-sm text-gray-500">
+                    Question {{ current_question }} of {{ total_questions }}
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mt-3">
+                    <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ (current_question / total_questions) * 100 }}%"></div>
+                </div>
+            </div>
+
+            <form action="/store_in_sql" method="GET" class="space-y-6">
+                <input type="hidden" name="kid_name" value="{{ kid_name }}">
+                <input type="hidden" name="phone_no" value="{{ phone_no }}">
+                <input type="hidden" name="encoded_text" value="{{ encoded_text }}">
+                <input type="hidden" name="ques_no" value="{{ encoded_ques_no }}">
+
+                <div class="space-y-4">
+                    <div class="bg-indigo-50 p-4 rounded-lg">
+                        <p class="text-lg text-gray-800">{{ question }}</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="answer" class="block text-sm font-medium text-gray-700">Your Answer:</label>
+                        <textarea name="answer" id="answer" rows="4" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors">
+                    {{ 'Finish Survey' if current_question == total_questions else 'Next Question' }}
+                </button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

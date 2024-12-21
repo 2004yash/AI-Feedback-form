@@ -1,21 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>hello</title>
+    <title>Hoopstar Academy Feedback</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h2></h2>
-    <form action="/question" id="kid_details_form"  method="GET">
-        <!-- Input fields specific to Form 1 (Index) -->
-        <label for="kid_name">Kid's Name:</label>
-        <input type="text" id="kid_name" name="kid_name" required>
-        <input type="hidden" id="ques_no" name="ques_no" value="1">`
-        <br>
-        <label for="phone_no">Phone Number:</label>
-        <input type="text" id="phone_no" name="phone_no" required>
-        <br>
-        <input type="submit" value="Start Survey">
-    </form>
+<body class="bg-gradient-to-r from-blue-50 to-indigo-50 min-h-screen">
+    <div class="container mx-auto px-4 py-16 max-w-md">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-indigo-600 mb-2">Welcome to Hoopstar Academy</h1>
+                <p class="text-gray-600">Please provide your details to start the feedback survey</p>
+            </div>
+            
+            <form action="/question" id="kid_details_form" method="GET" class="space-y-6">
+                <div class="space-y-2">
+                    <label for="kid_name" class="block text-sm font-medium text-gray-700">Kid's Name</label>
+                    <input type="text" id="kid_name" name="kid_name" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                    <input type="hidden" id="ques_no" name="ques_no" value="1">
+                </div>
+
+                <div class="space-y-2">
+                    <label for="phone_no" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input type="tel" id="phone_no" name="phone_no" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors">
+                    Start Survey
+                </button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
 

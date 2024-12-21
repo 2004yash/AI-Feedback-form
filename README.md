@@ -1,74 +1,85 @@
-# Feedback Form Web Application
+# AI Feedback Form
 
-Welcome to the Feedback Form web application repository! This project leverages HTML, CSS, Python (Flask), the OpenAI API, and MySQL to create an interactive and dynamic feedback system.
+An intelligent feedback collection system that uses OpenAI to generate dynamic follow-up questions based on user responses.
 
 ## Features
 
-- **User-Friendly Interface**: Developed using HTML and CSS to provide an intuitive and accessible user interface.
-- **Efficient Data Processing**: Implemented with Python and the Flask framework for efficient backend processing and data handling.
-- **Dynamic Question Generation**: Integrated the OpenAI API to generate contextually relevant questions based on user-provided answers.
-- **Database Integration**: Established a connection with MySQL to fetch questions and store user-generated questions along with their answers.
+- Beautiful UI with Tailwind CSS
+- Dynamic question generation
+- Progress tracking
+- Automated follow-up questions using AI
+- Secure data storage
 
-## Technologies Used
-
-- **Frontend**: HTML, CSS
-- **Backend**: Python (Flask)
-- **API**: OpenAI API
-- **Database**: MySQL
-
-## Getting Started
-
-To get a local copy up and running, follow these simple steps:
-
-### Prerequisites
-
-- Python 3.x
-- MySQL
-- OpenAI API key
-
-### Installation
+## Setup
 
 1. Clone the repository:
-   ```sh
-   git clone https://github.com/your-username/feedback-form-web-app.git
-   ```
-2. Navigate to the project directory:
-   ```sh
-   cd feedback-form-web-app
-   ```
-3. Install the required packages:
-   ```sh
-   pip install -r requirements.txt
-   ```
-4. Set up the MySQL database:
-   - Create a new database and note its name.
-   - Update the database configuration in the `config.py` file with your database credentials.
-   - Initialize the database schema:
-     ```sh
-     python init_db.py
-     ```
-5. Set your OpenAI API key in the `config.py` file.
 
-### Running the Application
+```bash
+git clone https://github.com/2004yash/AI-Feedback-form
+cd AI-Feedback-form
+```
 
-1. Start the Flask server:
-   ```sh
-   flask run
-   ```
-2. Open your web browser and navigate to `http://127.0.0.1:8000`.
+2. Install dependencies:
 
-## Usage
+```bash
+pip install -r requirements.txt
+```
 
-- **Providing Feedback**: Fill out the feedback form on the home page. The OpenAI API will generate contextually relevant questions based on your answers.
-- **Viewing Responses**: Responses are stored in the MySQL database and can be retrieved as needed.
+3. Create a `.env.local` file in the root directory with the following variables:
+
+```plaintext
+FLASK_SECRET_KEY=your-secret-key
+OPENAI_API_KEY=your-openai-api-key
+DB_HOST=your-database-host
+DB_USER=your-database-username
+DB_PASSWORD=your-database-password
+DB_NAME=your-database-name
+```
+
+4. Set up the database:
+
+```sql
+CREATE TABLE questions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    question_text TEXT NOT NULL
+);
+
+CREATE TABLE feedback_qna2 (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    kid_name VARCHAR(255) NOT NULL,
+    phone_no VARCHAR(20) NOT NULL,
+    ques TEXT NOT NULL,
+    ans TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+5. Run the application:
+
+```bash
+python app.py
+```
+
+## Environment Variables
+
+- `FLASK_SECRET_KEY`: Secret key for Flask sessions
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `DB_HOST`: MySQL database host
+- `DB_USER`: Database username
+- `DB_PASSWORD`: Database password
+- `DB_NAME`: Database name
+
+## Tech Stack
+
+- Flask
+- MySQL
+- OpenAI API
+- Tailwind CSS
 
 ## Contributing
 
-Contributions are welcome! Here's how you can contribute:
-- Fork the repository
-- Create a new branch (`git checkout -b feature`)
-- Make changes and commit (`git commit -am 'Add new feature'`)
-- Push to the branch (`git push origin feature`)
-- Create a pull request
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
+## License
 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
